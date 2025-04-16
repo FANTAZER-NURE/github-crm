@@ -1,0 +1,42 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int             @id @default(autoincrement())
+  email     String          @unique
+  name      String
+  password  String
+  createdAt DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  projects  GithubProject[]
+
+  @@map("users")
+}
+
+model GithubProject {
+  id             Int      @id @default(autoincrement())
+  userId         Int      @map("user_id")
+  owner          String
+  name           String
+  description    String   @default("")
+  url            String
+  stars          Int      @default(0)
+  forks          Int      @default(0)
+  issues         Int      @default(0)
+  ownerAvatarUrl String?  @map("owner_avatar_url")
+  createdAt      DateTime @map("created_at") @db.Timestamptz
+  updatedAt      DateTime @default(now()) @map("updated_at") @db.Timestamptz
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, owner, name])
+  @@map("github_projects")
+}

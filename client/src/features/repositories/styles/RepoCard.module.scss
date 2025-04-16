@@ -1,0 +1,82 @@
+@use '@blueprintjs/colors/lib/scss/colors' as *;
+
+.repositoryCard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: $dark-gray3;
+  border-radius: 4px;
+  padding: 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.3s ease;
+  opacity: 1;
+  animation: fadeIn 0.3s ease-in-out;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba($black, 0.2);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.repositoryName {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #106ba3;
+  font-size: 1.25rem;
+}
+
+.repositoryDescription {
+  flex-grow: 1;
+  margin-bottom: 15px;
+  color: #5c7080;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.repositoryStats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #738694;
+}
+
+.repositoryLink {
+  align-self: flex-start;
+  text-decoration: none;
+  color: #137cbd;
+  font-weight: 500;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.repositoryOwner {
+  margin-bottom: 0;
+}
+
+.repositoryGrid {
+  display: grid;
+  grid-gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+
+  > * {
+    transition: all 0.3s ease-in-out;
+  }
+}
