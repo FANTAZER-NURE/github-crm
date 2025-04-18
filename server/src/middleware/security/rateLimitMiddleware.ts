@@ -1,5 +1,5 @@
 import rateLimit from 'express-rate-limit';
-import { AppError } from '../../utils/AppError';
+import { AppError } from '../../utils/appError';
 
 /**
  * Creates a rate limiter for authentication routes

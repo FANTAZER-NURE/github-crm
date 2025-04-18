@@ -1,14 +1,13 @@
 import { Request, Response } from 'express';
 import { authService } from '../services/authService';
 import { config } from '../config';
-import { catchAsync } from '../utils/controllerHandler';
 import { LoginInput, RegisterInput } from '../schemas/authSchemas';
 import {
   AuthResponse,
   RefreshTokenRequest,
   RefreshTokenResponse,
 } from '../types/auth';
-import { createUnauthorizedError } from '../utils/AppError';
+import { createUnauthorizedError } from '../utils/appError';
 
 // Helper function to convert JWT expiration string to milliseconds
 const getMaxAgeFromJwtExpiration = (expiresIn: string): number => {
@@ -32,8 +31,8 @@ const getMaxAgeFromJwtExpiration = (expiresIn: string): number => {
   }
 };
 
-export const authController = {
-  register: catchAsync(async (req: Request, res: Response) => {
+export class AuthController {
+  async register(req: Request, res: Response) {
     const { email, password, name } = req.body as RegisterInput;
 
     const result = await authService.registerUser({
@@ -66,9 +65,9 @@ export const authController = {
     delete responseData.refreshToken;
 
     res.status(statusCode).json(responseData);
-  }),
+  }
 
-  login: catchAsync(async (req: Request, res: Response) => {
+  async login(req: Request, res: Response) {
     const { email, password } = req.body as LoginInput;
 
     const result = await authService.loginUser({ email, password });
@@ -97,9 +96,9 @@ export const authController = {
     delete responseData.refreshToken;
 
     res.status(statusCode).json(responseData);
-  }),
+  }
 
-  logout: catchAsync(async (req: Request, res: Response) => {
+  async logout(req: Request, res: Response) {
     // Clear both the access token and refresh token cookies
     res.cookie('jwt', '', {
       httpOnly: true,
@@ -119,9 +118,9 @@ export const authController = {
       success: true,
       message: 'Logged out successfully',
     });
-  }),
+  }
 
-  refreshToken: catchAsync(async (req: Request, res: Response) => {
+  async refreshToken(req: Request, res: Response) {
     // Get refresh token from cookie or request body
     const refreshToken =
       req.cookies.refresh_token ||
@@ -162,9 +161,9 @@ export const authController = {
       success: true,
       message: 'Token refreshed successfully',
     } as RefreshTokenResponse);
-  }),
+  }
 
-  getProfile: catchAsync(async (req: Request, res: Response) => {
+  async getProfile(req: Request, res: Response) {
     const userId = req.user?.id;
 
     if (!userId) {
@@ -177,5 +176,7 @@ export const authController = {
       success: true,
       user,
     } as AuthResponse);
-  }),
-};
+  }
+}
+
+export const authController = new AuthController();
