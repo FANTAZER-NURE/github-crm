@@ -102,41 +102,20 @@ export class GithubController {
   }
 
   async searchGlobalRepositories(req: Request, res: Response) {
-    const { search } = req.query;
+    const { query } = req.query;
 
-    if (!search || typeof search !== 'string') {
+    if (!query || typeof query !== 'string') {
       throw createBadRequestError('Search query is required');
     }
 
-    // GitHub search API requires a minimum of 3 characters
-    if (search.length < 3) {
-      return res.json({
-        success: true,
-        repositories: [],
-        message: 'GitHub API requires at least 3 characters for search',
-      });
-    }
+    const response = await githubService.searchGlobalRepositories(query);
 
-    const response = await axios.get(`${GITHUB_API_URL}/search/repositories`, {
-      params: {
-        q: search,
-        sort: 'stars',
-        order: 'desc',
-        per_page: 10,
-      },
-      headers: {
-        Accept: 'application/vnd.github.v3+json',
-        ...(process.env.GITHUB_TOKEN && {
-          Authorization: `token ${process.env.GITHUB_TOKEN}`,
-        }),
-      },
-    });
-
-    const repositories = response.data.items.map(mapGitHubRepo);
+    const repositories = response.items?.map(mapGitHubRepo);
 
     return res.json({
-      success: true,
+      success: response.success,
       repositories,
+      message: response.message,
     });
   }
 }

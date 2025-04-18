@@ -8,6 +8,8 @@ import {
 } from '../types/github';
 import { GithubProjectRepository } from '../data-layer/githubProjectRepository';
 import { dateToUnixTimestamp } from '../utils/dateUtils';
+import { mapGitHubRepo } from '../utils/mapGithubRepo';
+import { createBadRequestError } from '../utils/appError';
 
 const GITHUB_API_URL = process.env.GITHUB_API_URL || 'https://api.github.com';
 
@@ -334,6 +336,32 @@ export class GithubService {
           error instanceof Error
             ? `Failed to delete repository: ${error.message}`
             : 'Failed to delete repository due to an unknown error',
+      };
+    }
+  }
+
+  async searchGlobalRepositories(query: string): Promise<GithubRepoResponse> {
+    try {
+      // GitHub search API requires a minimum of 3 characters
+      if (query.length < 3) {
+        return {
+          success: true,
+          items: [],
+          message: 'GitHub API requires at least 3 characters for search',
+        };
+      }
+      const response = await axios.get(
+        `${GITHUB_API_URL}/search/repositories`,
+        {
+          params: { q: query },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error searching global repositories:', error);
+      return {
+        success: false,
+        message: 'Failed to search global repositories',
       };
     }
   }

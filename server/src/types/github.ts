@@ -42,6 +42,7 @@ export interface GithubRepoResponse {
   success: boolean;
   message?: string;
   repository?: GithubRepoData;
+  items?: GithubRepoData[];
 }
 
 export interface GithubReposResponse {
