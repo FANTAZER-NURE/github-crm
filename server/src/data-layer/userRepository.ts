@@ -28,4 +28,14 @@ export class UserRepository {
       data,
     });
   }
+
+  async updateToken(
+    id: number,
+    data: { accessToken: string | null }
+  ): Promise<User> {
+    return this.prisma.user.update({
+      where: { id },
+      data,
+    });
+  }
 }

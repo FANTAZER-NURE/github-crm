@@ -22,7 +22,6 @@ export const formatDate = (date: number | string) => {
     }
 
     if (isNaN(parsedDate.getTime())) {
-      console.log('Invalid date value:', date);
       return 'Invalid Date';
     }
 

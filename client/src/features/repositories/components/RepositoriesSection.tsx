@@ -9,7 +9,6 @@ import { Button, NonIdealState, Spinner } from '@blueprintjs/core';
 import styles from '../styles/RepositoriesPage.module.scss';
 import { EMPTY_FUNC } from '../../../utils/placeholders';
 import { Repository } from '../../../api/models';
-import { useToast } from '../../../contexts/ToastContext';
 
 /**
  * Repository grid component that renders repository cards
@@ -44,8 +43,7 @@ export const RepositoryGrid: React.FC<{
  */
 export const RepositoriesSection: React.FC = React.memo(() => {
   const { getUserRepositories } = useRepositoriesApi();
-  const { showSuccess, showError } = useToast();
-  const { deleteRepository } = useDeleteRepository(showSuccess, showError);
+  const { deleteRepository } = useDeleteRepository();
   const { refreshRepository, isRefreshing } = useRefreshRepository();
 
   const {

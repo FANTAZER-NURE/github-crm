@@ -22,7 +22,6 @@ interface Config {
   githubAccessToken?: string;
 }
 
-// Our validated and typed config object
 export const config: Config = {
   port: env.PORT,
   nodeEnv: env.NODE_ENV,

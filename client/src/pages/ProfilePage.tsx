@@ -1,10 +1,10 @@
 import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@blueprintjs/core';
-import { useAuth } from '../../../contexts/AuthContext';
+import { useAuthActions } from '../features/auth/hooks/useAuthActions';
 
 const ProfilePage: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, logout } = useAuthActions();
   const navigate = useNavigate();
 
   const displayName = useMemo(() => user?.name || 'User', [user]);

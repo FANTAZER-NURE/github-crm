@@ -2,7 +2,8 @@ import { useState, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRepositoriesApi } from '../api/repositoriesApi';
 import { Repository } from '../../../api/models';
-import { useToast } from '../../../contexts/ToastContext';
+import { useToastActions } from '../../toast/hooks/useToastActions';
+import { AxiosError } from 'axios';
 
 type ApiResponse =
   | Repository
@@ -14,7 +15,7 @@ export const useRefreshRepository = () => {
     {}
   );
   const queryClient = useQueryClient();
-  const { showSuccess, showError } = useToast();
+  const { showSuccess, showError } = useToastActions();
 
   const refreshRepository = useCallback(
     async (id: number) => {
@@ -60,15 +61,17 @@ export const useRefreshRepository = () => {
       } catch (error) {
         showError(
           `Failed to refresh repository: ${
-            error instanceof Error ? error.message : 'Unknown error'
+            error instanceof AxiosError
+              ? error.response?.data.errorMessage
+              : 'Unknown error'
           }`
         );
-        throw error;
+        return;
       } finally {
         setRefreshingIds((prev) => ({ ...prev, [id]: false }));
       }
     },
-    [apiRefreshRepository, queryClient, showSuccess, showError]
+    [apiRefreshRepository, queryClient, showError, showSuccess]
   );
 
   const isRefreshing = useCallback(

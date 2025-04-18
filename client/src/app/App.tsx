@@ -2,14 +2,13 @@ import { lazy, Suspense, useCallback } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import styles from './App.module.scss';
 import { ProtectedRoute } from '../shared/components/ProtectedRoute';
-import { OverlayToaster, Spinner } from '@blueprintjs/core';
+import { Spinner } from '@blueprintjs/core';
 import Header from '../shared/components/Header';
-import { useAuth } from '../contexts/AuthContext';
-import { useToast } from '../contexts/ToastContext';
+import { useAuthActions } from '../features/auth/hooks/useAuthActions';
 
-const LoginPage = lazy(() => import('../features/auth/pages/LoginPage'));
-const RegisterPage = lazy(() => import('../features/auth/pages/RegisterPage'));
-const ProfilePage = lazy(() => import('../features/profile/pages/ProfilePage'));
+const LoginPage = lazy(() => import('../pages/LoginPage'));
+const RegisterPage = lazy(() => import('../pages/RegisterPage'));
+const ProfilePage = lazy(() => import('../pages/ProfilePage'));
 const RepositoriesPage = lazy(
   () => import('../features/repositories/pages/RepositoriesPage')
 );
@@ -18,9 +17,7 @@ const SearchRepositoriesPage = lazy(
 );
 
 function App() {
-  const { isAuthenticated, loading } = useAuth();
-  const { getToaster } = useToast();
-
+  const { isAuthenticated, loading } = useAuthActions();
   const renderLoader = useCallback(() => {
     return (
       <div className={styles.loadingContainer}>
@@ -28,11 +25,9 @@ function App() {
       </div>
     );
   }, []);
-
   if (loading) {
     return renderLoader();
   }
-
   return (
     <div className={`${styles.appContainer} bp5-dark`}>
       {isAuthenticated && <Header />}
@@ -45,9 +40,9 @@ function App() {
             </Route>
 
             <Route element={<ProtectedRoute requireAuth={true} />}>
+              <Route path="/" element={<SearchRepositoriesPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/repositories" element={<RepositoriesPage />} />
-              <Route path="/" element={<SearchRepositoriesPage />} />
             </Route>
 
             <Route
@@ -56,10 +51,6 @@ function App() {
             />
           </Routes>
         </Suspense>
-        <OverlayToaster
-          ref={getToaster().ref}
-          position={getToaster().position}
-        />
       </main>
     </div>
   );

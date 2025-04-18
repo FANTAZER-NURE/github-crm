@@ -8,8 +8,9 @@ import { useDeleteRepository } from '../hooks/use-delete-repository';
 import { useRefreshRepository } from '../hooks/use-refresh-repository';
 import SearchInput from './SearchInput';
 import SearchResultsGrid from './SearchResultsGrid';
-import { useToast } from '../../../contexts/ToastContext';
 import { useRepositoriesApi } from '../api/repositoriesApi';
+import { useToastActions } from '../../toast/hooks/useToastActions';
+import { AxiosError } from 'axios';
 
 const SEARCH_DEBOUNCE_MS = 500;
 const MIN_SEARCH_LENGTH = 3; // GitHub API requires at least 3 characters
@@ -26,11 +27,12 @@ export const SearchRepositoriesSection: React.FC<SearchRepositoriesSectionProps>
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
+    const { showSuccess, showError } = useToastActions();
+
     const { refreshRepository, isRefreshing } = useRefreshRepository();
     const { getUserRepositories, createRepository, searchRepositories } =
       useRepositoriesApi();
-    const { showSuccess, showError } = useToast();
-    const { deleteRepository } = useDeleteRepository(showSuccess, showError);
+    const { deleteRepository } = useDeleteRepository();
 
     const queryClient = useQueryClient();
 
@@ -62,13 +64,14 @@ export const SearchRepositoriesSection: React.FC<SearchRepositoriesSectionProps>
       mutationFn: (repo: Repository) => createRepository(repo),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['userRepositories'] });
+
         showSuccess('Repository added successfully!');
       },
       onError: (error) => {
         console.error('Error adding repository:', error);
         showError(
-          error instanceof Error
-            ? `Failed to add repository: ${error.message}`
+          error instanceof AxiosError
+            ? `Failed to add repository: ${error.response?.data.errorMessage}`
             : 'Failed to add repository'
         );
       },
@@ -110,15 +113,14 @@ export const SearchRepositoriesSection: React.FC<SearchRepositoriesSectionProps>
           </div>
         );
       }
-
       if (isError) {
         return (
           <NonIdealState
             icon={IconNames.ERROR}
             title="Error loading repositories"
             description={
-              error instanceof Error
-                ? `Error: ${error.message}`
+              error instanceof AxiosError
+                ? `Error: ${error.response?.data.message}`
                 : 'There was an error loading the repositories. Please try again.'
             }
             action={

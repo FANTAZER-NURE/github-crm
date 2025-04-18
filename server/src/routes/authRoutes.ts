@@ -1,33 +1,45 @@
 import { Router } from 'express';
 import { authController } from '../controllers/authController';
-import { authMiddleware } from '../middleware/authMiddleware';
+import { authMiddleware } from '../middleware/auth/authMiddleware';
 import { validate } from '../middleware/validation/validationMiddleware';
-import {
-  loginSchema,
-  registerSchema,
-  refreshTokenSchema,
-} from '../schemas/authSchemas';
+import { loginSchema, registerSchema } from '../schemas/authSchemas';
 import { authRateLimiter } from '../middleware/security/rateLimitMiddleware';
+import { asyncHandler } from '../utils/asyncHandler';
 
 const router = Router();
 
 // Public routes
-router.post('/register', validate(registerSchema), authController.register);
+router.post(
+  '/register',
+  validate(registerSchema),
+  asyncHandler((req, res) => authController.register(req, res))
+);
+
 router.post(
   '/login',
   authRateLimiter,
   validate(loginSchema),
-  authController.login
+  asyncHandler((req, res) => authController.login(req, res))
 );
-router.post('/logout', authController.logout);
-router.post(
+
+router.get(
+  '/logout',
+  authMiddleware,
+  asyncHandler((req, res) => authController.logout(req, res))
+);
+
+router.get(
   '/refresh-token',
   authRateLimiter,
-  validate(refreshTokenSchema),
-  authController.refreshToken
+  authMiddleware,
+  asyncHandler((req, res) => authController.refreshToken(req, res))
 );
 
 // Protected routes
-router.get('/profile', authMiddleware, authController.getProfile);
+router.get(
+  '/profile',
+  authMiddleware,
+  asyncHandler((req, res) => authController.getProfile(req, res))
+);
 
 export default router;

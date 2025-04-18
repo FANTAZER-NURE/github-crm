@@ -1,3 +1,5 @@
+import { User } from "../generated/prisma";
+
 export interface RegisterUserData {
   email: string;
   password: string;
@@ -9,30 +11,24 @@ export interface LoginUserData {
   password: string;
 }
 
-export interface TokenPair {
-  accessToken: string;
-  refreshToken: string;
-}
-
 export interface AuthResponse {
   success: boolean;
   message?: string;
-  user?: {
-    id: number;
-    email: string;
-    name: string;
-  };
+  status: number;
+}
+
+export interface LoginResponse extends AuthResponse {
   token?: string;
-  refreshToken?: string;
+}
+
+export interface RefreshTokenResponse extends AuthResponse {
+  token?: string;
 }
 
 export interface RefreshTokenRequest {
   refreshToken: string;
 }
 
-export interface RefreshTokenResponse {
-  success: boolean;
-  message?: string;
-  token?: string;
-  refreshToken?: string;
+export interface GetUserByIdResponse extends AuthResponse {
+  user?: User;
 }

@@ -3,24 +3,27 @@
  * Operational errors represent problems that we expect and can handle gracefully.
  */
 export class AppError extends Error {
-  statusCode: number;
-  status: string;
+  status: number;
   isOperational: boolean;
+  success: boolean;
   path?: string;
   value?: any;
   code?: string;
+  errorMessage?: string;
 
   constructor(
     message: string,
-    statusCode: number = 500,
-    isOperational: boolean = true
+    status: number = 500,
+    isOperational: boolean = true,
+    success: boolean = false
   ) {
     super(message);
-    this.statusCode = statusCode;
-    this.status = `${statusCode}`.startsWith('4') ? 'fail' : 'error';
+    this.status = status;
     this.isOperational = isOperational;
     this.name = this.constructor.name;
-
+    this.success = success;
+    this.message = message;
+    this.errorMessage = message;
     Error.captureStackTrace(this, this.constructor);
   }
 }
@@ -30,9 +33,10 @@ export class AppError extends Error {
  */
 export const createBadRequestError = (
   message: string,
-  value?: any
+  value?: any,
+  success?: boolean
 ): AppError => {
-  const error = new AppError(message, 400);
+  const error = new AppError(message, 400, success);
   if (value) error.value = value;
   return error;
 };

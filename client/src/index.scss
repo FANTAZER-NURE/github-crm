@@ -131,41 +131,6 @@ textarea {
   }
 }
 
-/* Common page layout */
-.page-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: var(--space-6);
-  width: 100%;
-}
-
-.card {
-  background-color: $dark-gray3;
-  border-radius: var(--border-radius);
-  box-shadow: 0 0 0 1px rgba($black, 0.2), 0 1px 3px rgba($black, 0.2);
-  padding: var(--space-6);
-  margin-bottom: var(--space-6);
-}
-
-/* Error messages */
-.error-message {
-  color: $red4;
-  background-color: rgba($red3, 0.15);
-  padding: var(--space-3);
-  border-radius: var(--border-radius);
-  margin-bottom: var(--space-4);
-}
-
-/* Loading state */
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-  color: $light-gray3;
-}
-
 /* Media queries for responsiveness */
 @media (max-width: 768px) {
   .page-container {

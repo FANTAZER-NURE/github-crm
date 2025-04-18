@@ -12,14 +12,22 @@ datasource db {
 }
 
 model User {
-  id        Int             @id @default(autoincrement())
-  email     String          @unique
-  name      String
-  password  String
-  createdAt DateTime        @default(now()) @map("created_at") @db.Timestamptz
-  projects  GithubProject[]
+  id          Int             @id @default(autoincrement())
+  email       String          @unique
+  name        String
+  password    String
+  createdAt   DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  projects    GithubProject[]
+  accessToken String?
 
   @@map("users")
+}
+
+model RevokedToken {
+  id    Int    @id @default(autoincrement())
+  token String
+
+  @@map("revoked_tokens")
 }
 
 model GithubProject {
@@ -32,7 +40,7 @@ model GithubProject {
   stars          Int      @default(0)
   forks          Int      @default(0)
   issues         Int      @default(0)
-  ownerAvatarUrl String?  @map("owner_avatar_url")
+  ownerAvatarUrl String   @map("owner_avatar_url")
   createdAt      DateTime @map("created_at") @db.Timestamptz
   updatedAt      DateTime @default(now()) @map("updated_at") @db.Timestamptz
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)

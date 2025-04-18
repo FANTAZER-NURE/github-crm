@@ -32,8 +32,7 @@ export const SearchResultsGrid: React.FC<SearchResultsGridProps> = React.memo(
       (repo: Repository) => {
         return savedRepositories.some(
           (savedRepo) =>
-            savedRepo.owner.login === repo.owner.login &&
-            savedRepo.name === repo.name
+            savedRepo.owner === repo.owner && savedRepo.name === repo.name
         );
       },
       [savedRepositories]
@@ -44,8 +43,7 @@ export const SearchResultsGrid: React.FC<SearchResultsGridProps> = React.memo(
       (repo: Repository): number | null => {
         const savedRepo = savedRepositories.find(
           (savedRepo) =>
-            savedRepo.owner.login === repo.owner.login &&
-            savedRepo.name === repo.name
+            savedRepo.owner === repo.owner && savedRepo.name === repo.name
         );
         return savedRepo ? savedRepo.id : null;
       },

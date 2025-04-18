@@ -122,7 +122,13 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   name: 'name',
   password: 'password',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  accessToken: 'accessToken'
+};
+
+exports.Prisma.RevokedTokenScalarFieldEnum = {
+  id: 'id',
+  token: 'token'
 };
 
 exports.Prisma.GithubProjectScalarFieldEnum = {
@@ -158,6 +164,7 @@ exports.Prisma.NullsOrder = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  RevokedToken: 'RevokedToken',
   GithubProject: 'GithubProject'
 };
 

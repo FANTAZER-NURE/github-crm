@@ -10,7 +10,7 @@ export const authRateLimiter = rateLimit({
   max: 100, // Limit each IP to 100 requests per windowMs
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  handler: (req, res, next, options) => {
+  handler: (_req, _res, next, _options) => {
     next(
       new AppError(
         'Too many requests from this IP, please try again later.',
@@ -28,7 +28,7 @@ export const apiRateLimiter = rateLimit({
   max: 200, // Limit each IP to 200 requests per windowMs
   standardHeaders: true,
   legacyHeaders: false,
-  handler: (req, res, next, options) => {
+  handler: (_req, _res, next, _options) => {
     next(
       new AppError(
         'Too many requests from this IP, please try again later.',

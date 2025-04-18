@@ -3,6 +3,7 @@
 A simple project management system (CRM) for public GitHub projects.
 
 ## Note for reviewer:
+
 - the logger is a simple implementation, for prod I would use some 3-rd party solution.
 - also I probably would use some state manager, but in this context I considered it redundant
 
@@ -32,6 +33,7 @@ NODE_ENV=development
 PORT=3000
 DATABASE_URL=postgres://postgres:postgres@db:5432/github_crm
 JWT_SECRET=your_jwt_secret_change_this_in_production
+JWT_REFRESH_SECRET=your_jwt_refresh_secret_change_this_in_production
 GITHUB_API_URL=https://api.github.com
 ```
 

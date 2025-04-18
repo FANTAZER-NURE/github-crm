@@ -4,7 +4,7 @@ import logger from '../../utils/logger';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 interface ErrorResponse {
-  status: string;
+  status: number;
   message: string;
   code?: string;
   path?: string;
@@ -46,10 +46,10 @@ const handleJWTExpiredError = (): AppError => {
 /**
  * Format error for development environment
  */
-const sendErrorDev = (err: AppError, req: Request, res: Response) => {
+const sendErrorDev = (err: AppError, _req: Request, res: Response) => {
   logger.error(`ERROR 💥`, err);
 
-  res.status(err.statusCode).json({
+  res.status(err.status).json({
     status: err.status,
     message: err.message,
     stack: err.stack,
@@ -60,7 +60,7 @@ const sendErrorDev = (err: AppError, req: Request, res: Response) => {
 /**
  * Format error for production environment
  */
-const sendErrorProd = (err: AppError, req: Request, res: Response) => {
+const sendErrorProd = (err: AppError, _req: Request, res: Response) => {
   // Only log non-operational errors (unexpected errors)
   if (!err.isOperational) {
     logger.error('Non-operational error:', err);
@@ -75,7 +75,7 @@ const sendErrorProd = (err: AppError, req: Request, res: Response) => {
     if (err.code) errorResponse.code = err.code;
     if (err.path) errorResponse.path = err.path;
 
-    return res.status(err.statusCode).json(errorResponse);
+    return res.status(err.status).json(errorResponse);
   }
 
   return res.status(500).json({
@@ -91,7 +91,7 @@ export const globalErrorHandler = (
   err: Error,
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ): void => {
   let error: AppError =
     err instanceof AppError
@@ -118,7 +118,7 @@ export const globalErrorHandler = (
  */
 export const notFoundHandler = (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): void => {
   const path = req.originalUrl || req.url;

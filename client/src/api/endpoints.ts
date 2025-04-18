@@ -1,18 +1,11 @@
 import * as Models from './models';
 
-// Define response interfaces
-export interface RepositoriesResponse {
-  success: boolean;
-  repositories: Models.Repository[];
-  message?: string;
-}
-
 export interface GET {
   '/github/repositories': {
     params: {
       search?: string;
     };
-    result: RepositoriesResponse;
+    result: Models.RepositoriesResponse;
   };
   '/github/repositories/:id': {
     params: never;
@@ -20,13 +13,32 @@ export interface GET {
   };
   '/github/search': {
     params: {
-      search: string;
+      query: string;
     };
-    result: RepositoriesResponse;
+    result: Models.RepositoriesResponse;
   };
   '/auth/profile': {
     params: never;
-    result: Models.AuthResponse;
+    result: Models.ProfileResponse;
+  };
+  '/auth/refresh-token': {
+    params: never;
+    result: Models.RefreshTokenResponse;
+  };
+  '/auth/logout': {
+    params: never;
+    result: {
+      success: boolean;
+      message: string;
+    };
+  };
+  '/github/repositories/refresh/:id': {
+    params: {
+      name?: string;
+      description?: string;
+      url?: string;
+    };
+    result: Models.Repository;
   };
 }
 
@@ -48,34 +60,11 @@ export interface POST {
       email: string;
       password: string;
     };
-    result: Models.AuthResponse;
-  };
-  '/auth/logout': {
-    params: never;
-    result: {
-      success: boolean;
-      message: string;
-    };
-  };
-  '/auth/refresh-token': {
-    params?: {
-      refreshToken?: string;
-    };
-    result: Models.RefreshTokenResponse;
+    result: Models.RegisterResponse;
   };
 }
 
-export interface PUT {
-  '/github/repositories/:id': {
-    params: {
-      name?: string;
-      description?: string;
-      url?: string;
-      refresh?: boolean;
-    };
-    result: Models.Repository;
-  };
-}
+export type PUT = object;
 
 export interface DELETE {
   '/github/repositories/:id': {

@@ -4,15 +4,17 @@ import { IconNames } from '@blueprintjs/icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRepositoriesApi } from '../api/repositoriesApi';
 import styles from '../styles/RepositoriesPage.module.scss';
-import { useToast } from '../../../contexts/ToastContext';
-
+import { useAppDispatch } from '../../../redux/hooks';
+import { showSuccess, showError } from '../../../redux/slices/toastSlice';
+import { AxiosError } from 'axios';
 /**
  * Component that allows users to add a GitHub repository directly using owner/repo path
  */
 export const AddRepositoryByPath: React.FC = React.memo(() => {
   const [repoPath, setRepoPath] = useState('');
   const [isValidPath, setIsValidPath] = useState(true);
-  const { showSuccess, showError } = useToast();
+  
+  const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
   const { createRepository } = useRepositoriesApi();
 
@@ -27,16 +29,23 @@ export const AddRepositoryByPath: React.FC = React.memo(() => {
       return createRepository({ repoPath: path });
     },
     onSuccess: () => {
-      showSuccess('Repository added successfully!');
+      dispatch(
+        showSuccess({
+          message: 'Repository added successfully!',
+        })
+      );
       setRepoPath('');
       queryClient.invalidateQueries({ queryKey: ['userRepositories'] });
     },
     onError: (error) => {
       console.error('Error adding repository:', error);
-      showError(
-        error instanceof Error
-          ? `Failed to add repository: ${error.message}`
-          : 'Failed to add repository'
+      dispatch(
+        showError({
+          message:
+            error instanceof AxiosError
+              ? `Failed to add repository: ${error.response?.data.errorMessage}`
+              : 'Failed to add repository',
+        })
       );
     },
   });

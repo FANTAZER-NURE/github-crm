@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { AnyZodObject, ZodError } from 'zod';
-import { createBadRequestError } from '../../utils/appError';
+import { createBadRequestError } from '../../utils/AppError';
 import logger from '../../utils/logger';
 
 /**
@@ -14,7 +14,7 @@ export const validate = (
   schema: AnyZodObject,
   source: 'body' | 'query' | 'params' = 'body'
 ) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, _res: Response, next: NextFunction) => {
     try {
       const data = await schema.parseAsync(req[source]);
 

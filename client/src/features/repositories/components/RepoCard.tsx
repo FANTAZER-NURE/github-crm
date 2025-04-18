@@ -12,7 +12,7 @@ import { Repository } from '../../../api/models';
 import styles from '../styles/RepoCard.module.scss';
 import { FlexContainer } from '../../../shared/ui/FlexContainer';
 import { Avatar } from '../../../shared/ui/Avatar';
-import { formatDate } from '../../../utils/format-date';
+import { formatDate } from '../../../utils/formatDate';
 import { IconNames } from '@blueprintjs/icons';
 import { IconButton } from '../../../shared/ui/IconButton';
 import { useCallback, useMemo } from 'react';
@@ -84,9 +84,9 @@ export const RepoCard: React.FC<RepoCardProps> = React.memo(
           </FlexContainer>
         </FlexContainer>
         <FlexContainer gap={5} centeredY>
-          <Avatar width={32} height={32} rounded url={repo.owner.avatar_url} />
+          <Avatar width={32} height={32} rounded url={repo.ownerAvatarUrl} />
           <H4 color={Colors.GRAY5} className={styles.repositoryOwner}>
-            {repo.owner.login}
+            {repo.owner}
           </H4>
         </FlexContainer>
         <Text ellipsize className={styles.repositoryDescription}>

@@ -12,6 +12,7 @@ import {
 } from './middleware/error/errorMiddleware';
 import { apiRateLimiter } from './middleware/security/rateLimitMiddleware';
 import logger from './utils/logger';
+import { authenticate } from './middleware/auth/authMiddleware';
 
 dotenv.config();
 
@@ -32,9 +33,9 @@ app.use(cookieParser());
 app.use('/api', apiRateLimiter);
 
 app.use('/api/auth', authRoutes);
-app.use('/api/github', githubRoutes);
+app.use('/api/github', authenticate, githubRoutes);
 
-app.get('/api/health', (req, res) => {
+app.get('/api/health', (_req, res) => {
   res.status(200).json({ status: 'ok', message: 'Server is running' });
 });
 

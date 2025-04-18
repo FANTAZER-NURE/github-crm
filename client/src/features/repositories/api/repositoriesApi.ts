@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { Repository } from '../../../api/models';
-import { api } from '../../../api/client';
+import { deleteApi, getApi, postApi } from '../../../api/privateHttpClient';
 
 export const useRepositoriesApi = () => {
   const searchRepositories = useCallback(
@@ -8,11 +8,11 @@ export const useRepositoriesApi = () => {
       if (!searchTerm.trim()) return [];
 
       try {
-        const response = await api.getApi('/github/search', {
-          search: searchTerm,
+        const response = await getApi('/github/search', {
+          query: searchTerm,
         });
 
-        if (response && response.success) {
+        if (response) {
           return response.repositories || [];
         }
 
@@ -27,7 +27,7 @@ export const useRepositoriesApi = () => {
 
   const getUserRepositories = useCallback(async (): Promise<Repository[]> => {
     try {
-      const response = await api.getApi('/github/repositories', {});
+      const response = await getApi('/github/repositories', {});
 
       if (response && response.success) {
         return response.repositories || [];
@@ -42,7 +42,7 @@ export const useRepositoriesApi = () => {
 
   const getRepositoryById = useCallback(
     async (id: number): Promise<Repository> => {
-      const response = await api.getApi(
+      const response = await getApi(
         `/github/repositories/${id}` as '/github/repositories/:id'
       );
       return response;
@@ -55,7 +55,7 @@ export const useRepositoriesApi = () => {
       repository: Repository | { repoPath: string }
     ): Promise<Repository> => {
       try {
-        const response = await api.postApi('/github/repositories', repository);
+        const response = await postApi('/github/repositories', repository);
         return response;
       } catch (error) {
         console.error('Error creating repository:', error);
@@ -65,25 +65,10 @@ export const useRepositoriesApi = () => {
     []
   );
 
-  const updateRepository = useCallback(
-    async (
-      id: number,
-      data: { name?: string; description?: string; url?: string }
-    ): Promise<Repository> => {
-      const response = await api.putApi(
-        `/github/repositories/${id}` as '/github/repositories/:id',
-        data
-      );
-      return response;
-    },
-    []
-  );
-
   const refreshRepository = useCallback(
     async (id: number): Promise<Repository> => {
-      const response = await api.putApi(
-        `/github/repositories/${id}` as '/github/repositories/:id',
-        { refresh: true }
+      const response = await getApi(
+        `/github/repositories/refresh/${id}` as '/github/repositories/refresh/:id'
       );
       return response;
     },
@@ -92,7 +77,7 @@ export const useRepositoriesApi = () => {
 
   const deleteRepository = useCallback(
     async (id: number): Promise<{ success: boolean; message: string }> => {
-      const response = await api.deleteApi(
+      const response = await deleteApi(
         `/github/repositories/${id}` as '/github/repositories/:id'
       );
       return response;
@@ -105,7 +90,6 @@ export const useRepositoriesApi = () => {
     getUserRepositories,
     getRepositoryById,
     createRepository,
-    updateRepository,
     refreshRepository,
     deleteRepository,
   };

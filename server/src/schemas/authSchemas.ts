@@ -28,11 +28,6 @@ export const loginSchema = z.object({
     .max(100, 'Password cannot exceed 100 characters'),
 });
 
-export const refreshTokenSchema = z.object({
-  refreshToken: z.string().optional(),
-});
-
 // Export types generated from the schemas
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
-export type RefreshTokenInput = z.infer<typeof refreshTokenSchema>;

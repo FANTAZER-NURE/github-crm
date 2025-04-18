@@ -8,15 +8,10 @@ import { IconNames } from '@blueprintjs/icons';
 import { Button, NonIdealState, Spinner } from '@blueprintjs/core';
 import styles from '../styles/RepositoriesPage.module.scss';
 import { EMPTY_FUNC } from '../../../utils/placeholders';
-import { useToast } from '../../../contexts/ToastContext';
 
-/**
- * Repository list component that handles fetching, loading states, and rendering repository cards
- */
 export const RepoList = React.memo(() => {
   const { getUserRepositories } = useRepositoriesApi();
-  const { showSuccess, showError } = useToast();
-  const { deleteRepository } = useDeleteRepository(showSuccess, showError);
+  const { deleteRepository } = useDeleteRepository();
   const { refreshRepository, isRefreshing } = useRefreshRepository();
 
   const {

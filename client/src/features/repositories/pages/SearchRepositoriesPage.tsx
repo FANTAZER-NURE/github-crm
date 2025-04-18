@@ -2,9 +2,9 @@ import React, { useMemo } from 'react';
 import { H2 } from '@blueprintjs/core';
 import styles from '../styles/RepositoriesPage.module.scss';
 import { SearchRepositoriesSection } from '../components/SearchRepositoriesSection';
-import { useAuth } from '../../../contexts/AuthContext';
+import { useAuthActions } from '../../auth/hooks/useAuthActions';
 const SearchRepositoriesPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user } = useAuthActions();
 
   const greeting = useMemo(() => {
     return user ? `Welcome back, ${user.name}!` : 'Welcome!';

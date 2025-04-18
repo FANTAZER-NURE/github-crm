@@ -3,12 +3,12 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Navbar, Button, Alignment, Tab, Tabs, Tag } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
 import styles from './Header.module.scss';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuthActions } from '../../features/auth/hooks/useAuthActions';
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout, isAuthenticated, user } = useAuth();
+  const { logout, isAuthenticated, user } = useAuthActions();
 
   const currentPath = useMemo(() => {
     if (location.pathname === '/profile') return 'profile';

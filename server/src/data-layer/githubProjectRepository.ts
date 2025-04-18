@@ -47,7 +47,7 @@ export class GithubProjectRepository {
     stars: number;
     forks: number;
     issues: number;
-    ownerAvatarUrl?: string;
+    ownerAvatarUrl: string;
     createdAt: Date;
   }): Promise<GithubProject> {
     return this.prisma.githubProject.create({

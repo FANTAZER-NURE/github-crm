@@ -6,10 +6,8 @@ export interface Repository {
   stars: number;
   forks: number;
   issues: number;
-  owner: {
-    login: string;
-    avatar_url: string;
-  };
+  owner: string;
+  ownerAvatarUrl: string;
   createdAt: number | string;
 }
 
@@ -21,14 +19,29 @@ export interface User {
 
 export interface AuthResponse {
   success: boolean;
-  user?: User;
   token?: string;
-  message?: string;
+}
+
+export interface RegisterResponse {
+  success: boolean;
+  message: string;
+  user?: User;
+}
+
+export interface ProfileResponse {
+  success: boolean;
+  user: User;
 }
 
 export interface RefreshTokenResponse {
   success: boolean;
   token?: string;
   refreshToken?: string;
+  message?: string;
+}
+
+export interface RepositoriesResponse {
+  success: boolean;
+  repositories: Repository[];
   message?: string;
 }
