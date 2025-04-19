@@ -16,7 +16,7 @@ export class TokenRepository {
   }
 
   async findRevokedToken(token: string): Promise<RevokedToken | null> {
-    return this.prisma.revokedToken.findUnique({
+    return this.prisma.revokedToken.findFirst({
       where: { token },
     });
   }

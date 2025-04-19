@@ -4,11 +4,11 @@ import styles from './App.module.scss';
 import { ProtectedRoute } from '../shared/components/ProtectedRoute';
 import { OverlayToaster, Spinner } from '@blueprintjs/core';
 import Header from '../shared/components/Header';
-import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
+import { useAuth } from '../contexts/AuthContext';
 
-const LoginPage = lazy(() => import('../features/auth/pages/LoginPage'));
-const RegisterPage = lazy(() => import('../features/auth/pages/RegisterPage'));
+const LoginPage = lazy(() => import('../pages/LoginPage'));
+const RegisterPage = lazy(() => import('../pages/RegisterPage'));
 const ProfilePage = lazy(() => import('../features/profile/pages/ProfilePage'));
 const RepositoriesPage = lazy(
   () => import('../features/repositories/pages/RepositoriesPage')

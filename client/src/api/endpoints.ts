@@ -26,7 +26,18 @@ export interface GET {
   };
   '/auth/profile': {
     params: never;
-    result: Models.AuthResponse;
+    result: Models.ProfileResponse;
+  };
+  '/auth/refresh-token': {
+    params: never;
+    result: Models.RefreshTokenResponse;
+  };
+  '/auth/logout': {
+    params: never;
+    result: {
+      success: boolean;
+      message: string;
+    };
   };
 }
 
@@ -48,20 +59,7 @@ export interface POST {
       email: string;
       password: string;
     };
-    result: Models.AuthResponse;
-  };
-  '/auth/logout': {
-    params: never;
-    result: {
-      success: boolean;
-      message: string;
-    };
-  };
-  '/auth/refresh-token': {
-    params?: {
-      refreshToken?: string;
-    };
-    result: Models.RefreshTokenResponse;
+    result: Models.RegisterResponse;
   };
 }
 

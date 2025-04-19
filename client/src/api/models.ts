@@ -21,9 +21,18 @@ export interface User {
 
 export interface AuthResponse {
   success: boolean;
-  user?: User;
   token?: string;
-  message?: string;
+}
+
+export interface RegisterResponse {
+  success: boolean;
+  message: string;
+  user?: User;
+}
+
+export interface ProfileResponse {
+  success: boolean;
+  user: User;
 }
 
 export interface RefreshTokenResponse {

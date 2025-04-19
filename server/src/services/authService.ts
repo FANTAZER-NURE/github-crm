@@ -3,12 +3,18 @@ import jwt, { Secret, SignOptions, JwtPayload } from 'jsonwebtoken';
 import { config } from '../config';
 import { RegisterUserData, LoginUserData, AuthResponse } from '../types/auth';
 import { UserRepository } from '../data-layer/userRepository';
+import { TokenRepository } from '../data-layer/tokenRepository';
 
 export class AuthService {
   private userRepository: UserRepository;
+  private tokenRepository: TokenRepository;
 
-  constructor(userRepository?: UserRepository) {
+  constructor(
+    userRepository?: UserRepository,
+    tokenRepository?: TokenRepository
+  ) {
     this.userRepository = userRepository || new UserRepository();
+    this.tokenRepository = tokenRepository || new TokenRepository();
   }
 
   /**
@@ -50,7 +56,8 @@ export class AuthService {
       if (!user) {
         return null;
       }
-      await this.userRepository.createRevokedToken(user.accessToken || '');
+
+      await this.tokenRepository.createRevokedToken(user.accessToken || '');
 
       await this.userRepository.updateToken(user.id, {
         accessToken: null,
@@ -162,6 +169,10 @@ export class AuthService {
       email: user.email,
       name: user.name,
     };
+  }
+
+  async logoutUser(token: string) {
+    await this.tokenRepository.createRevokedToken(token);
   }
 }
 

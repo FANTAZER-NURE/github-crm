@@ -2,23 +2,25 @@ import React, {
   createContext,
   useContext,
   useState,
-  useEffect,
   ReactNode,
   useCallback,
   useMemo,
 } from 'react';
 import { User, AuthContextType } from '../features/auth/types/auth-types';
-import { useAuthApi } from '../features/auth/api/authApi';
-import axios from 'axios';
+import {
+  getProfile,
+  login,
+  logout,
+  register,
+} from '../features/auth/api/authApi';
+import { tokenService } from '../utils/tokenService';
+import { AxiosError } from 'axios';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface AuthProviderProps {
   children: ReactNode;
 }
-
-// Time before token expiry to trigger refresh (5 minutes in ms)
-const REFRESH_TOKEN_THRESHOLD = 5 * 60 * 1000;
 
 /**
  * Auth Provider Component
@@ -27,118 +29,57 @@ const REFRESH_TOKEN_THRESHOLD = 5 * 60 * 1000;
  */
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [tokenExpiryTime, setTokenExpiryTime] = useState<number | null>(null);
-  const authApi = useAuthApi();
   const isAuthenticated = useMemo(() => !!user, [user]);
 
-  /**
-   * Refresh the access token using the refresh token
-   */
-  const refreshTokens = useCallback(async (): Promise<boolean> => {
+  const handleGetProfile = useCallback(async (): Promise<User | null> => {
     try {
-      const response = await authApi.refreshToken();
-
-      if (response.success) {
-        // Refresh was successful - update token expiry
-        // Default to 1 hour if we don't know the exact time
-        setTokenExpiryTime(Date.now() + 60 * 60 * 1000);
-        return true;
-      }
-      return false;
-    } catch (err) {
-      console.error('Error refreshing token:', err);
-      return false;
-    }
-  }, [authApi]);
-
-  // Set up a timer to refresh the token
-  useEffect(() => {
-    let refreshTimeout: ReturnType<typeof setTimeout> | null = null;
-
-    if (isAuthenticated && tokenExpiryTime) {
-      const timeToRefresh =
-        tokenExpiryTime - Date.now() - REFRESH_TOKEN_THRESHOLD;
-
-      if (timeToRefresh <= 0) {
-        // Refresh immediately if token is about to expire or already expired
-        refreshTokens();
-      } else {
-        // Schedule a refresh
-        refreshTimeout = setTimeout(() => {
-          refreshTokens();
-        }, timeToRefresh);
-      }
-    }
-
-    return () => {
-      if (refreshTimeout) {
-        clearTimeout(refreshTimeout);
-      }
-    };
-  }, [isAuthenticated, tokenExpiryTime, refreshTokens]);
-
-  /**
-   * Initialize auth state
-   * Attempts to restore user session on app load
-   */
-  const initialize = useCallback(async () => {
-    try {
-      const response = await authApi.getProfile();
+      const response = await getProfile();
 
       if (response.success && response.user) {
         setUser(response.user);
-
-        // Calculate token expiry based on current time and the standard JWT expiry
-        // We don't know the exact expiry time from the cookie, so default to 1 hour
-        setTokenExpiryTime(Date.now() + 60 * 60 * 1000);
       }
+
+      return response.user;
     } catch (err) {
-      console.log('Auth Provider: error during initialization', err);
-
-      // Try to refresh the token if the error is due to token expiration
-      if (axios.isAxiosError(err) && err.response?.status === 401) {
-        try {
-          await refreshTokens();
-          // If refresh was successful, try to get profile again
-          await initialize();
-          return;
-        } catch (refreshError) {
-          // Silent failure on refresh - user is not authenticated
-          console.log(
-            'Token refresh failed during initialization',
-            refreshError
-          );
-        }
-      }
-    } finally {
-      setLoading(false);
+      setError(
+        err instanceof Error ? err.message : 'An error occurred during login'
+      );
+      return null;
     }
-  }, [authApi, refreshTokens]);
-
-  // Initialize on component mount
-  useEffect(() => {
-    initialize();
-  }, [initialize]);
+  }, []);
 
   /**
    * Login handler - authenticates user with provided credentials
    */
-  const login = useCallback(
-    async (email: string, password: string): Promise<void> => {
+  const handleLogin = useCallback(
+    async ({
+      email,
+      password,
+    }: {
+      email: string;
+      password: string;
+    }): Promise<void> => {
       setLoading(true);
       setError(null);
+      console.log('LOGIN');
 
       try {
-        const response = await authApi.login({ email, password });
+        const response = await login({ email, password });
 
-        if (response.success && response.user) {
-          setUser(response.user);
-          // Set token expiry based on current time plus JWT expiration (default 1 hour)
-          setTokenExpiryTime(Date.now() + 60 * 60 * 1000);
+        if (response.success && response.token) {
+          console.log('response.token', response.token);
+          tokenService.saveToken(response.token);
+        }
+
+        const user = await handleGetProfile();
+
+        if (user) {
+          setUser(user);
+          console.log('response.token', response.token);
         } else {
-          throw new Error(response.message || 'Login failed');
+          throw new Error('Login failed');
         }
       } catch (err) {
         setError(
@@ -149,31 +90,37 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setLoading(false);
       }
     },
-    [authApi]
+    [handleGetProfile]
   );
 
   /**
    * Register handler - creates a new user account
    */
-  const register = useCallback(
+  const handleRegister = useCallback(
     async (name: string, email: string, password: string): Promise<void> => {
       setLoading(true);
       setError(null);
 
       try {
-        const response = await authApi.register({ name, email, password });
+        const response = await register({ name, email, password });
 
         if (response.success && response.user) {
           setUser(response.user);
-          // Set token expiry based on current time plus JWT expiration (default 1 hour)
-          setTokenExpiryTime(Date.now() + 60 * 60 * 1000);
         } else {
-          throw new Error(response.message || 'Registration failed');
+          console.log('HERE1', response);
+          setError(response.message || 'Registration failed');
         }
       } catch (err) {
+        console.log(
+          'HERE2',
+          err,
+          err instanceof Error,
+          err instanceof AxiosError
+        );
+
         setError(
-          err instanceof Error
-            ? err.message
+          err instanceof AxiosError
+            ? err.response?.data.message
             : 'An error occurred during registration'
         );
         throw err;
@@ -181,27 +128,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setLoading(false);
       }
     },
-    [authApi]
+    []
   );
 
   /**
    * Logout handler - ends the user session
    */
-  const logout = useCallback(async (): Promise<void> => {
+  const handleLogout = useCallback(async (): Promise<void> => {
     setLoading(true);
     try {
-      await authApi.logout();
+      await logout();
       setUser(null);
-      setTokenExpiryTime(null);
     } catch (err) {
       console.error('Logout error:', err);
       // Still clear the user state even if API call fails
       setUser(null);
-      setTokenExpiryTime(null);
     } finally {
       setLoading(false);
     }
-  }, [authApi]);
+  }, []);
 
   /**
    * Clear any auth-related errors
@@ -216,22 +161,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       loading,
       error,
       isAuthenticated,
-      login,
-      register,
-      logout,
+      handleLogin: handleLogin,
+      handleRegister: handleRegister,
+      logout: handleLogout,
       clearError,
-      refreshTokens,
     }),
     [
       user,
       loading,
       error,
       isAuthenticated,
-      login,
-      register,
-      logout,
+      handleLogin,
+      handleRegister,
+      handleLogout,
       clearError,
-      refreshTokens,
     ]
   );
 

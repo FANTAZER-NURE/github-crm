@@ -1108,7 +1108,6 @@ export namespace Prisma {
     password: string | null
     createdAt: Date | null
     accessToken: string | null
-    refreshToken: string | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -1118,7 +1117,6 @@ export namespace Prisma {
     password: string | null
     createdAt: Date | null
     accessToken: string | null
-    refreshToken: string | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -1128,7 +1126,6 @@ export namespace Prisma {
     password: number
     createdAt: number
     accessToken: number
-    refreshToken: number
     _all: number
   }
 
@@ -1148,7 +1145,6 @@ export namespace Prisma {
     password?: true
     createdAt?: true
     accessToken?: true
-    refreshToken?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -1158,7 +1154,6 @@ export namespace Prisma {
     password?: true
     createdAt?: true
     accessToken?: true
-    refreshToken?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -1168,7 +1163,6 @@ export namespace Prisma {
     password?: true
     createdAt?: true
     accessToken?: true
-    refreshToken?: true
     _all?: true
   }
 
@@ -1265,7 +1259,6 @@ export namespace Prisma {
     password: string
     createdAt: Date
     accessToken: string | null
-    refreshToken: string | null
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
     _sum: UserSumAggregateOutputType | null
@@ -1294,7 +1287,6 @@ export namespace Prisma {
     password?: boolean
     createdAt?: boolean
     accessToken?: boolean
-    refreshToken?: boolean
     projects?: boolean | User$projectsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
@@ -1306,7 +1298,6 @@ export namespace Prisma {
     password?: boolean
     createdAt?: boolean
     accessToken?: boolean
-    refreshToken?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1316,7 +1307,6 @@ export namespace Prisma {
     password?: boolean
     createdAt?: boolean
     accessToken?: boolean
-    refreshToken?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -1326,10 +1316,9 @@ export namespace Prisma {
     password?: boolean
     createdAt?: boolean
     accessToken?: boolean
-    refreshToken?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "password" | "createdAt" | "accessToken" | "refreshToken", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "password" | "createdAt" | "accessToken", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     projects?: boolean | User$projectsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1349,7 +1338,6 @@ export namespace Prisma {
       password: string
       createdAt: Date
       accessToken: string | null
-      refreshToken: string | null
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -1780,7 +1768,6 @@ export namespace Prisma {
     readonly password: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly accessToken: FieldRef<"User", 'String'>
-    readonly refreshToken: FieldRef<"User", 'String'>
   }
     
 
@@ -4420,8 +4407,7 @@ export namespace Prisma {
     name: 'name',
     password: 'password',
     createdAt: 'createdAt',
-    accessToken: 'accessToken',
-    refreshToken: 'refreshToken'
+    accessToken: 'accessToken'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -4551,7 +4537,6 @@ export namespace Prisma {
     password?: StringFilter<"User"> | string
     createdAt?: DateTimeFilter<"User"> | Date | string
     accessToken?: StringNullableFilter<"User"> | string | null
-    refreshToken?: StringNullableFilter<"User"> | string | null
     projects?: GithubProjectListRelationFilter
   }
 
@@ -4562,7 +4547,6 @@ export namespace Prisma {
     password?: SortOrder
     createdAt?: SortOrder
     accessToken?: SortOrderInput | SortOrder
-    refreshToken?: SortOrderInput | SortOrder
     projects?: GithubProjectOrderByRelationAggregateInput
   }
 
@@ -4576,7 +4560,6 @@ export namespace Prisma {
     password?: StringFilter<"User"> | string
     createdAt?: DateTimeFilter<"User"> | Date | string
     accessToken?: StringNullableFilter<"User"> | string | null
-    refreshToken?: StringNullableFilter<"User"> | string | null
     projects?: GithubProjectListRelationFilter
   }, "id" | "email">
 
@@ -4587,7 +4570,6 @@ export namespace Prisma {
     password?: SortOrder
     createdAt?: SortOrder
     accessToken?: SortOrderInput | SortOrder
-    refreshToken?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -4605,7 +4587,6 @@ export namespace Prisma {
     password?: StringWithAggregatesFilter<"User"> | string
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     accessToken?: StringNullableWithAggregatesFilter<"User"> | string | null
-    refreshToken?: StringNullableWithAggregatesFilter<"User"> | string | null
   }
 
   export type RevokedTokenWhereInput = {
@@ -4623,11 +4604,11 @@ export namespace Prisma {
 
   export type RevokedTokenWhereUniqueInput = Prisma.AtLeast<{
     id?: number
-    token?: string
     AND?: RevokedTokenWhereInput | RevokedTokenWhereInput[]
     OR?: RevokedTokenWhereInput[]
     NOT?: RevokedTokenWhereInput | RevokedTokenWhereInput[]
-  }, "id" | "token">
+    token?: StringFilter<"RevokedToken"> | string
+  }, "id">
 
   export type RevokedTokenOrderByWithAggregationInput = {
     id?: SortOrder
@@ -4746,7 +4727,6 @@ export namespace Prisma {
     password: string
     createdAt?: Date | string
     accessToken?: string | null
-    refreshToken?: string | null
     projects?: GithubProjectCreateNestedManyWithoutUserInput
   }
 
@@ -4757,7 +4737,6 @@ export namespace Prisma {
     password: string
     createdAt?: Date | string
     accessToken?: string | null
-    refreshToken?: string | null
     projects?: GithubProjectUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -4767,7 +4746,6 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
-    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     projects?: GithubProjectUpdateManyWithoutUserNestedInput
   }
 
@@ -4778,7 +4756,6 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
-    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     projects?: GithubProjectUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -4789,7 +4766,6 @@ export namespace Prisma {
     password: string
     createdAt?: Date | string
     accessToken?: string | null
-    refreshToken?: string | null
   }
 
   export type UserUpdateManyMutationInput = {
@@ -4798,7 +4774,6 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
-    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -4808,7 +4783,6 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
-    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type RevokedTokenCreateInput = {
@@ -5018,7 +4992,6 @@ export namespace Prisma {
     password?: SortOrder
     createdAt?: SortOrder
     accessToken?: SortOrder
-    refreshToken?: SortOrder
   }
 
   export type UserAvgOrderByAggregateInput = {
@@ -5032,7 +5005,6 @@ export namespace Prisma {
     password?: SortOrder
     createdAt?: SortOrder
     accessToken?: SortOrder
-    refreshToken?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -5042,7 +5014,6 @@ export namespace Prisma {
     password?: SortOrder
     createdAt?: SortOrder
     accessToken?: SortOrder
-    refreshToken?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
@@ -5499,7 +5470,6 @@ export namespace Prisma {
     password: string
     createdAt?: Date | string
     accessToken?: string | null
-    refreshToken?: string | null
   }
 
   export type UserUncheckedCreateWithoutProjectsInput = {
@@ -5509,7 +5479,6 @@ export namespace Prisma {
     password: string
     createdAt?: Date | string
     accessToken?: string | null
-    refreshToken?: string | null
   }
 
   export type UserCreateOrConnectWithoutProjectsInput = {
@@ -5534,7 +5503,6 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
-    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserUncheckedUpdateWithoutProjectsInput = {
@@ -5544,7 +5512,6 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
-    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type GithubProjectCreateManyUserInput = {

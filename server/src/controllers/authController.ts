@@ -42,24 +42,6 @@ export class AuthController {
       name,
     });
 
-    if (result.success && result.token) {
-      res.cookie('jwt', result.token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: getMaxAgeFromJwtExpiration(config.jwtExpiresIn),
-      });
-
-      if (result.refreshToken) {
-        res.cookie('refresh_token', result.refreshToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'strict',
-          maxAge: getMaxAgeFromJwtExpiration(config.jwtRefreshExpiresIn),
-        });
-      }
-    }
-
     const statusCode = result.success ? 201 : 400;
     const responseData = { ...result };
     delete responseData.token;
@@ -73,47 +55,29 @@ export class AuthController {
 
     const result = await authService.loginUser({ email, password });
 
-    if (result.success && result.token) {
-      res.cookie(AUTH_TOKEN_NAME, result.token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: getMaxAgeFromJwtExpiration(config.jwtExpiresIn),
-      });
-    }
-
     const statusCode = result.success ? 200 : 400;
     const responseData = { ...result };
-    // delete responseData.token;
+
+    console.log('responseData', responseData);
+    console.log('result', result);
 
     res.status(statusCode).json(responseData);
   }
 
   async logout(req: Request, res: Response) {
-    // Clear both the access token and refresh token cookies
-    res.cookie('jwt', '', {
-      httpOnly: true,
-      expires: new Date(0),
-      sameSite: 'strict',
-      secure: process.env.NODE_ENV === 'production',
-    });
+    const token = req.headers.authorization?.split(' ')[1];
 
-    res.cookie('refresh_token', '', {
-      httpOnly: true,
-      expires: new Date(0),
-      sameSite: 'strict',
-      secure: process.env.NODE_ENV === 'production',
-    });
-
-    res.status(200).json({
-      success: true,
-      message: 'Logged out successfully',
-    });
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'Auth token is required',
+      } as RefreshTokenResponse);
+    }
   }
 
   async refreshToken(req: Request, res: Response) {
     // Get refresh token from cookie or request body
-    const authToken = req.cookies[AUTH_TOKEN_NAME];
+    const authToken = req.headers.authorization?.split(' ')[1];
 
     if (!authToken) {
       return res.status(401).json({
@@ -131,17 +95,10 @@ export class AuthController {
       } as RefreshTokenResponse);
     }
 
-    // Set new cookies
-    res.cookie(AUTH_TOKEN_NAME, token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: getMaxAgeFromJwtExpiration(config.jwtExpiresIn),
-    });
-
     res.status(200).json({
       success: true,
       message: 'Token refreshed successfully',
+      token,
     } as RefreshTokenResponse);
   }
 

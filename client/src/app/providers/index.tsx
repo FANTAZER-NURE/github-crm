@@ -22,6 +22,7 @@ export const Providers: React.FC<ProvidersProps> = ({ children }) => {
     <QueryClientProvider client={queryClient}>
       <ToastProvider>
         <AuthProvider>{children}</AuthProvider>
+        {/* {children} */}
       </ToastProvider>
     </QueryClientProvider>
   );
