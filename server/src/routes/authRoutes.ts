@@ -31,10 +31,9 @@ router.post(
   asyncHandler((req, res) => authController.logout(req, res))
 );
 
-router.post(
+router.get(
   '/refresh-token',
   authRateLimiter,
-  validate(refreshTokenSchema),
   asyncHandler((req, res) => authController.refreshToken(req, res))
 );
 

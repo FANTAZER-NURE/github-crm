@@ -18,8 +18,17 @@ model User {
   password          String
   createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz
   projects          GithubProject[]
+  accessToken       String?
+  refreshToken      String?
 
   @@map("users")
+}
+
+model RevokedToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  
+  @@map("revoked_tokens")
 }
 
 model GithubProject {

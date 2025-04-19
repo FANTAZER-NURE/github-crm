@@ -7,7 +7,8 @@ import {
   RefreshTokenRequest,
   RefreshTokenResponse,
 } from '../types/auth';
-import { createUnauthorizedError } from '../utils/appError';
+import { createUnauthorizedError } from '../utils/AppError';
+import { AUTH_TOKEN_NAME } from '../utils/constants';
 
 // Helper function to convert JWT expiration string to milliseconds
 const getMaxAgeFromJwtExpiration = (expiresIn: string): number => {
@@ -73,27 +74,17 @@ export class AuthController {
     const result = await authService.loginUser({ email, password });
 
     if (result.success && result.token) {
-      res.cookie('jwt', result.token, {
+      res.cookie(AUTH_TOKEN_NAME, result.token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         maxAge: getMaxAgeFromJwtExpiration(config.jwtExpiresIn),
       });
-
-      if (result.refreshToken) {
-        res.cookie('refresh_token', result.refreshToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'strict',
-          maxAge: getMaxAgeFromJwtExpiration(config.jwtRefreshExpiresIn),
-        });
-      }
     }
 
     const statusCode = result.success ? 200 : 400;
     const responseData = { ...result };
-    delete responseData.token;
-    delete responseData.refreshToken;
+    // delete responseData.token;
 
     res.status(statusCode).json(responseData);
   }
@@ -122,20 +113,18 @@ export class AuthController {
 
   async refreshToken(req: Request, res: Response) {
     // Get refresh token from cookie or request body
-    const refreshToken =
-      req.cookies.refresh_token ||
-      (req.body as RefreshTokenRequest).refreshToken;
+    const authToken = req.cookies[AUTH_TOKEN_NAME];
 
-    if (!refreshToken) {
+    if (!authToken) {
       return res.status(401).json({
         success: false,
-        message: 'Refresh token is required',
+        message: 'Auth token is required',
       } as RefreshTokenResponse);
     }
 
-    const tokens = await authService.refreshTokens(refreshToken);
+    const token = await authService.refreshToken(authToken);
 
-    if (!tokens) {
+    if (!token) {
       return res.status(401).json({
         success: false,
         message: 'Invalid or expired refresh token',
@@ -143,18 +132,11 @@ export class AuthController {
     }
 
     // Set new cookies
-    res.cookie('jwt', tokens.accessToken, {
+    res.cookie(AUTH_TOKEN_NAME, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: getMaxAgeFromJwtExpiration(config.jwtExpiresIn),
-    });
-
-    res.cookie('refresh_token', tokens.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: getMaxAgeFromJwtExpiration(config.jwtRefreshExpiresIn),
     });
 
     res.status(200).json({

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { AnyZodObject, ZodError } from 'zod';
-import { createBadRequestError } from '../../utils/appError';
+import { createBadRequestError } from '../../utils/AppError';
 import logger from '../../utils/logger';
 
 /**

@@ -1,4 +1,4 @@
-import { PrismaClient, User } from '../generated/prisma';
+import { PrismaClient, RevokedToken, User } from '../generated/prisma';
 
 export class UserRepository {
   private prisma: PrismaClient;
@@ -26,6 +26,22 @@ export class UserRepository {
   }): Promise<User> {
     return this.prisma.user.create({
       data,
+    });
+  }
+
+  async updateToken(
+    id: number,
+    data: { accessToken: string | null }
+  ): Promise<User> {
+    return this.prisma.user.update({
+      where: { id },
+      data,
+    });
+  }
+
+  async createRevokedToken(token: string): Promise<RevokedToken> {
+    return this.prisma.revokedToken.create({
+      data: { token },
     });
   }
 }

@@ -1,12 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt, { Secret, SignOptions, JwtPayload } from 'jsonwebtoken';
 import { config } from '../config';
-import {
-  RegisterUserData,
-  LoginUserData,
-  AuthResponse,
-  TokenPair,
-} from '../types/auth';
+import { RegisterUserData, LoginUserData, AuthResponse } from '../types/auth';
 import { UserRepository } from '../data-layer/userRepository';
 
 export class AuthService {
@@ -19,26 +14,30 @@ export class AuthService {
   /**
    * Generate access and refresh tokens for a user
    */
-  private generateTokens(userId: number): TokenPair {
-    const accessToken = jwt.sign(
-      { id: userId },
-      config.jwtSecret as Secret,
-      { expiresIn: config.jwtExpiresIn } as SignOptions
-    );
-
+  private generateRefreshToken(userId: number) {
     const refreshToken = jwt.sign(
       { id: userId },
       config.jwtRefreshSecret as Secret,
       { expiresIn: config.jwtRefreshExpiresIn } as SignOptions
     );
 
-    return { accessToken, refreshToken };
+    return refreshToken;
+  }
+
+  private generateAccessToken(userId: number) {
+    const accessToken = jwt.sign(
+      { id: userId },
+      config.jwtSecret as Secret,
+      { expiresIn: config.jwtExpiresIn } as SignOptions
+    );
+
+    return accessToken;
   }
 
   /**
    * Verify refresh token and generate new token pair
    */
-  async refreshTokens(refreshToken: string): Promise<TokenPair | null> {
+  async refreshToken(refreshToken: string): Promise<string | null> {
     try {
       const decoded = jwt.verify(
         refreshToken,
@@ -51,8 +50,13 @@ export class AuthService {
       if (!user) {
         return null;
       }
+      await this.userRepository.createRevokedToken(user.accessToken || '');
 
-      return this.generateTokens(user.id);
+      await this.userRepository.updateToken(user.id, {
+        accessToken: null,
+      });
+
+      return this.generateRefreshToken(user.id);
     } catch (error) {
       console.error('Refresh token error:', error);
       return null;
@@ -84,7 +88,12 @@ export class AuthService {
       });
 
       try {
-        const { accessToken, refreshToken } = this.generateTokens(user.id);
+        // const { accessToken, refreshToken } = this.generateRefreshToken(
+        //   user.id
+        // );
+
+        const accessToken = this.generateAccessToken(user.id);
+        const refreshToken = this.generateRefreshToken(user.id);
 
         return {
           success: true,
@@ -125,22 +134,16 @@ export class AuthService {
         };
       }
 
-      try {
-        const { accessToken, refreshToken } = this.generateTokens(user.id);
+      const accessToken = this.generateAccessToken(user.id);
 
-        return {
-          success: true,
-          user: {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-          },
-          token: accessToken,
-          refreshToken,
-        };
-      } catch (error) {
-        throw new Error('Failed to generate JWT tokens');
-      }
+      await this.userRepository.updateToken(user.id, {
+        accessToken,
+      });
+
+      return {
+        success: true,
+        token: accessToken,
+      };
     } catch (error) {
       console.error('Login error:', error);
       throw new Error('Failed to login user');

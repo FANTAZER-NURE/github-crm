@@ -8,7 +8,7 @@ import {
   createBadRequestError,
   createNotFoundError,
   createForbiddenError,
-} from '../utils/appError';
+} from '../utils/AppError';
 
 const GITHUB_API_URL = process.env.GITHUB_API_URL || 'https://api.github.com';
 

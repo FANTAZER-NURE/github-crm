@@ -9,11 +9,6 @@ export interface LoginUserData {
   password: string;
 }
 
-export interface TokenPair {
-  accessToken: string;
-  refreshToken: string;
-}
-
 export interface AuthResponse {
   success: boolean;
   message?: string;
