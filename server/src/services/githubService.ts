@@ -1,6 +1,5 @@
 import axios from 'axios';
 import {
-  GithubRepoData,
   AddGithubRepoData,
   GithubRepoResponse,
   GithubReposResponse,
@@ -8,10 +7,12 @@ import {
 } from '../types/github';
 import { GithubProjectRepository } from '../data-layer/githubProjectRepository';
 import { dateToUnixTimestamp } from '../utils/dateUtils';
-import { mapGitHubRepo } from '../utils/mapGithubRepo';
-import { createBadRequestError } from '../utils/AppError';
 
 const GITHUB_API_URL = process.env.GITHUB_API_URL || 'https://api.github.com';
+
+const AxiosGHInstance = axios.create({
+  baseURL: GITHUB_API_URL,
+});
 
 export class GithubService {
   private githubProjectRepository: GithubProjectRepository;
@@ -23,9 +24,7 @@ export class GithubService {
 
   async fetchRepositoryInfo(owner: string, repo: string): Promise<any> {
     try {
-      const response = await axios.get(
-        `https://api.github.com/repos/${owner}/${repo}`
-      );
+      const response = await AxiosGHInstance.get(`/repos/${owner}/${repo}`);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {

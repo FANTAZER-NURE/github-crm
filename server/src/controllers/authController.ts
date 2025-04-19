@@ -1,39 +1,14 @@
 import { Request, Response } from 'express';
 import { authService } from '../services/authService';
-import { config } from '../config';
 import { LoginInput, RegisterInput } from '../schemas/authSchemas';
 import {
-  AuthResponse,
-  RefreshTokenRequest,
-  RefreshTokenResponse,
-} from '../types/auth';
-import { createUnauthorizedError } from '../utils/AppError';
-import { AUTH_TOKEN_NAME } from '../utils/constants';
-
-// Helper function to convert JWT expiration string to milliseconds
-const getMaxAgeFromJwtExpiration = (expiresIn: string): number => {
-  const match = expiresIn.match(/^(\d+)([smhd])$/);
-  if (!match) return 24 * 60 * 60 * 1000; // Default to 1 day
-
-  const value = parseInt(match[1], 10);
-  const unit = match[2];
-
-  switch (unit) {
-    case 's':
-      return value * 1000; // seconds to ms
-    case 'm':
-      return value * 60 * 1000; // minutes to ms
-    case 'h':
-      return value * 60 * 60 * 1000; // hours to ms
-    case 'd':
-      return value * 24 * 60 * 60 * 1000; // days to ms
-    default:
-      return 24 * 60 * 60 * 1000; // Default to 1 day
-  }
-};
+  createBadRequestError,
+  createUnauthorizedError,
+} from '../utils/AppError';
+import { splitToken } from '../utils/splitToken';
 
 export class AuthController {
-  async register(req: Request, res: Response) {
+  public async register(req: Request, res: Response) {
     const { email, password, name } = req.body as RegisterInput;
 
     const result = await authService.registerUser({
@@ -42,79 +17,65 @@ export class AuthController {
       name,
     });
 
-    const statusCode = result.success ? 201 : 400;
-    const responseData = { ...result };
-    delete responseData.token;
-    delete responseData.refreshToken;
-
-    res.status(statusCode).json(responseData);
+    res.status(result.status).json(result);
   }
 
-  async login(req: Request, res: Response) {
+  public async login(req: Request, res: Response) {
     const { email, password } = req.body as LoginInput;
 
     const result = await authService.loginUser({ email, password });
 
-    const statusCode = result.success ? 200 : 400;
-    const responseData = { ...result };
-
-    console.log('responseData', responseData);
-    console.log('result', result);
-
-    res.status(statusCode).json(responseData);
+    res.status(result.status).json(result);
   }
 
-  async logout(req: Request, res: Response) {
-    const token = req.headers.authorization?.split(' ')[1];
+  public async logout(req: Request, res: Response) {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+      return createUnauthorizedError('Auth token is required');
+    }
+    const token = splitToken(authHeader);
 
     if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: 'Auth token is required',
-      } as RefreshTokenResponse);
+      return createUnauthorizedError('Auth token is required');
     }
+
+    const result = await authService.logoutUser(token);
+
+    res.status(result.status).json(result);
   }
 
-  async refreshToken(req: Request, res: Response) {
-    // Get refresh token from cookie or request body
-    const authToken = req.headers.authorization?.split(' ')[1];
+  public async refreshToken(req: Request, res: Response) {
+    const authHeader = req.headers.authorization;
 
-    if (!authToken) {
-      return res.status(401).json({
-        success: false,
-        message: 'Auth token is required',
-      } as RefreshTokenResponse);
+    if (!authHeader) {
+      return createUnauthorizedError('Auth token is required');
     }
-
-    const token = await authService.refreshToken(authToken);
+    const token = splitToken(authHeader);
 
     if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid or expired refresh token',
-      } as RefreshTokenResponse);
+      return createUnauthorizedError('Auth token is required');
     }
 
-    res.status(200).json({
-      success: true,
-      message: 'Token refreshed successfully',
-      token,
-    } as RefreshTokenResponse);
+    const result = await authService.refreshToken(token);
+
+    if (!result.success) {
+      return createUnauthorizedError('Failed to refresh token');
+    }
+
+    res.status(result.status).json(result);
   }
 
-  async getProfile(req: Request, res: Response) {
+  public async getProfile(req: Request, res: Response) {
     const userId = req.user?.id;
 
     if (!userId) {
-      throw createUnauthorizedError('User ID not found in request');
+      throw createBadRequestError('User ID not found in request');
     }
 
-    const user = await authService.getUserById(userId);
+    const result = await authService.getUserById(userId);
 
-    res.json({
-      success: true,
-      user,
-    } as AuthResponse);
+    res.status(result.status).json(result);
   }
 }
 

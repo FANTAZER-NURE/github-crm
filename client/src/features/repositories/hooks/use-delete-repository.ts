@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRepositoriesApi } from '../api/repositoriesApi';
 import { Repository } from '../../../api/models';
 import { RepositoriesResponse } from '../../../api/endpoints';
-import { useToastActions } from '../../toast/hooks';
+import { useToastActions } from '../../auth/hooks/useToastActions';
 
 /**
  * Custom hook for handling repository deletion operations

@@ -1,4 +1,4 @@
-import { PrismaClient, RevokedToken, User } from '../generated/prisma';
+import { PrismaClient, User } from '../generated/prisma';
 
 export class UserRepository {
   private prisma: PrismaClient;
@@ -38,16 +38,4 @@ export class UserRepository {
       data,
     });
   }
-
-  // async createRevokedToken(token: string): Promise<RevokedToken> {
-  //   return this.prisma.revokedToken.create({
-  //     data: { token },
-  //   });
-  // }
-
-  // async findRevokedToken(token: string): Promise<RevokedToken | null> {
-  //   return this.prisma.revokedToken.findUnique({
-  //     where: { token },
-  //   });
-  // }
 }

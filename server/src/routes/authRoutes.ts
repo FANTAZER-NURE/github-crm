@@ -5,7 +5,6 @@ import { validate } from '../middleware/validation/validationMiddleware';
 import {
   loginSchema,
   registerSchema,
-  refreshTokenSchema,
 } from '../schemas/authSchemas';
 import { authRateLimiter } from '../middleware/security/rateLimitMiddleware';
 import { asyncHandler } from '../utils/asyncHandler';
