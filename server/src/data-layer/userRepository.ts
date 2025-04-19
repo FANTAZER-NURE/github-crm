@@ -39,9 +39,15 @@ export class UserRepository {
     });
   }
 
-  async createRevokedToken(token: string): Promise<RevokedToken> {
-    return this.prisma.revokedToken.create({
-      data: { token },
-    });
-  }
+  // async createRevokedToken(token: string): Promise<RevokedToken> {
+  //   return this.prisma.revokedToken.create({
+  //     data: { token },
+  //   });
+  // }
+
+  // async findRevokedToken(token: string): Promise<RevokedToken | null> {
+  //   return this.prisma.revokedToken.findUnique({
+  //     where: { token },
+  //   });
+  // }
 }

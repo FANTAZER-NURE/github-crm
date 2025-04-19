@@ -6,8 +6,10 @@ import logger from '../utils/logger';
 import { UserRepository } from '../data-layer/userRepository';
 import { User } from '../generated/prisma';
 import { AUTH_TOKEN_NAME } from '../utils/constants';
+import { TokenRepository } from '../data-layer/tokenRepository';
 
 const userRepository = new UserRepository();
+const tokenRepository = new TokenRepository();
 
 declare global {
   namespace Express {
@@ -38,6 +40,12 @@ export const authMiddleware = async (
 
     if (!token) {
       return next(createUnauthorizedError('Token missing'));
+    }
+
+    // if token in revoked table, return 401
+    const revokedToken = await tokenRepository.findRevokedToken(token);
+    if (revokedToken) {
+      return next(createUnauthorizedError('Token expired or invalid'));
     }
 
     const decoded = jwt.verify(token, config.jwtSecret as Secret) as {
