@@ -1,6 +1,11 @@
 import { useCallback } from 'react';
 import { Repository } from '../../../api/models';
-import { api } from '../../../api/client';
+import {
+  deleteApi,
+  getApi,
+  postApi,
+  putApi,
+} from '../../../api/privateHttpClient';
 
 export const useRepositoriesApi = () => {
   const searchRepositories = useCallback(
@@ -8,7 +13,7 @@ export const useRepositoriesApi = () => {
       if (!searchTerm.trim()) return [];
 
       try {
-        const response = await api.getApi('/github/search', {
+        const response = await getApi('/github/search', {
           search: searchTerm,
         });
 
@@ -27,7 +32,7 @@ export const useRepositoriesApi = () => {
 
   const getUserRepositories = useCallback(async (): Promise<Repository[]> => {
     try {
-      const response = await api.getApi('/github/repositories', {});
+      const response = await getApi('/github/repositories', {});
 
       if (response && response.success) {
         return response.repositories || [];
@@ -42,7 +47,7 @@ export const useRepositoriesApi = () => {
 
   const getRepositoryById = useCallback(
     async (id: number): Promise<Repository> => {
-      const response = await api.getApi(
+      const response = await getApi(
         `/github/repositories/${id}` as '/github/repositories/:id'
       );
       return response;
@@ -55,7 +60,7 @@ export const useRepositoriesApi = () => {
       repository: Repository | { repoPath: string }
     ): Promise<Repository> => {
       try {
-        const response = await api.postApi('/github/repositories', repository);
+        const response = await postApi('/github/repositories', repository);
         return response;
       } catch (error) {
         console.error('Error creating repository:', error);
@@ -70,7 +75,7 @@ export const useRepositoriesApi = () => {
       id: number,
       data: { name?: string; description?: string; url?: string }
     ): Promise<Repository> => {
-      const response = await api.putApi(
+      const response = await putApi(
         `/github/repositories/${id}` as '/github/repositories/:id',
         data
       );
@@ -81,7 +86,7 @@ export const useRepositoriesApi = () => {
 
   const refreshRepository = useCallback(
     async (id: number): Promise<Repository> => {
-      const response = await api.putApi(
+      const response = await putApi(
         `/github/repositories/${id}` as '/github/repositories/:id',
         { refresh: true }
       );
@@ -92,7 +97,7 @@ export const useRepositoriesApi = () => {
 
   const deleteRepository = useCallback(
     async (id: number): Promise<{ success: boolean; message: string }> => {
-      const response = await api.deleteApi(
+      const response = await deleteApi(
         `/github/repositories/${id}` as '/github/repositories/:id'
       );
       return response;

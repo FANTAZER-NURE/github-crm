@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { Navigate, useLocation, Outlet } from 'react-router-dom';
 import { Spinner } from '@blueprintjs/core';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuthActions } from '../../features/toast/hooks/useAuthActions';
 
 interface ProtectedRouteProps {
   requireAuth?: boolean;
@@ -10,7 +10,7 @@ interface ProtectedRouteProps {
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requireAuth = true,
 }) => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading } = useAuthActions();
   const location = useLocation();
 
   const checkAccess = useCallback(() => {

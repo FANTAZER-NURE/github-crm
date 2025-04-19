@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRepositoriesApi } from '../api/repositoriesApi';
 import { Repository } from '../../../api/models';
 import { RepositoriesResponse } from '../../../api/endpoints';
-import { useToast } from '../../../contexts/ToastContext';
+import { useToastActions } from '../../toast/hooks';
 
 /**
  * Custom hook for handling repository deletion operations
@@ -17,7 +17,7 @@ export const useDeleteRepository = (
 ) => {
   const queryClient = useQueryClient();
   const { deleteRepository: apiDeleteRepository } = useRepositoriesApi();
-  const { showSuccess, showError } = useToast();
+  const { showSuccess, showError } = useToastActions();
 
   const displaySuccess = customShowSuccess || showSuccess;
   const displayError = customShowError || showError;

@@ -1,7 +1,11 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useCallback } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthProvider } from '../../contexts/AuthContext';
-import { ToastProvider } from '../../contexts/ToastContext';
+import { Provider } from 'react-redux';
+import { fetchUserProfile } from '../../redux/slices/authSlice';
+import ToastListener from '../../features/toast/ToastListener';
+import { tokenService } from '../../utils/tokenService';
+import store from '../../redux/store';
+
 // Create a client
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,12 +22,26 @@ interface ProvidersProps {
 }
 
 export const Providers: React.FC<ProvidersProps> = ({ children }) => {
+  const initializeAuth = useCallback(async () => {
+    if (tokenService.getToken()) {
+      try {
+        store.dispatch(fetchUserProfile());
+      } catch (error) {
+        console.error('Failed to restore session:', error);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth]);
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <ToastProvider>
-        <AuthProvider>{children}</AuthProvider>
-        {/* {children} */}
-      </ToastProvider>
-    </QueryClientProvider>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <ToastListener />
+        {children}
+      </QueryClientProvider>
+    </Provider>
   );
 };

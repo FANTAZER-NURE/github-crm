@@ -76,7 +76,6 @@ export const authMiddleware = async (
       email: user.email,
       name: user.name,
       accessToken: null,
-      refreshToken: null,
     };
 
     console.log('user.accessToken2', user);

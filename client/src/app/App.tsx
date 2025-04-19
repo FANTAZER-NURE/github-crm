@@ -2,10 +2,9 @@ import { lazy, Suspense, useCallback } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import styles from './App.module.scss';
 import { ProtectedRoute } from '../shared/components/ProtectedRoute';
-import { OverlayToaster, Spinner } from '@blueprintjs/core';
+import { Spinner } from '@blueprintjs/core';
 import Header from '../shared/components/Header';
-import { useToast } from '../contexts/ToastContext';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuthActions } from '../features/toast/hooks/useAuthActions';
 
 const LoginPage = lazy(() => import('../pages/LoginPage'));
 const RegisterPage = lazy(() => import('../pages/RegisterPage'));
@@ -18,8 +17,7 @@ const SearchRepositoriesPage = lazy(
 );
 
 function App() {
-  const { isAuthenticated, loading } = useAuth();
-  const { getToaster } = useToast();
+  const { isAuthenticated, loading } = useAuthActions();
 
   const renderLoader = useCallback(() => {
     return (
@@ -56,10 +54,10 @@ function App() {
             />
           </Routes>
         </Suspense>
-        <OverlayToaster
+        {/* <OverlayToaster
           ref={getToaster().ref}
           position={getToaster().position}
-        />
+        /> */}
       </main>
     </div>
   );
