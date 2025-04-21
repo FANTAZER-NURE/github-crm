@@ -20,12 +20,19 @@ The Docker Compose configuration already includes the necessary environment vari
 
 ## If smth goes wrong, don't waste your time with docker and try to run the app locally. (but you can try to restart the container)
 
-1. make sure to have .env for client and server (check below)
+1. make sure to have .env for client and server (check below, or rename the .env.example to .env)
 2. run only the db in the docker
-3. run `cd client && yarn`
-4. run `cd server && yarn`
-5. run `cd server && yarn dev`
-6. run `cd client && yarn dev`
+3. client:
+
+   - run `cd client && yarn`
+   - run `cd client && yarn dev`
+
+4. server:
+   - run `cd server && npm install`
+   - run `npx prisma generate`
+   - run `npx prisma migrate dev --name init`
+   - run `npm run dev`
+5. Enjoy!
 
 #### Environment Variables
 
