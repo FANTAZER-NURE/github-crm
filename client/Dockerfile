@@ -10,4 +10,4 @@ RUN yarn
 
 EXPOSE 5173
 # Use a startup script instead of direct command for better error handling
-CMD ["sh", "-c", "yarn run dev"] 
+CMD ["sh", "-c", "yarn run dev --host 0.0.0.0"]

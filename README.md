@@ -4,7 +4,7 @@ A simple project management system (CRM) for public GitHub projects.
 
 ## Note for reviewer:
 
-- the logger is a simple implementation, for prod I would use some 3-rd party solution.
+- the logger is a simple implementation, for prod I would use some 3-rd party and more reliable solution.
 - we store the revoked token in the db, so I would set up a cron job to clean it up as well
 
 ## Docker Setup
@@ -17,6 +17,15 @@ A simple project management system (CRM) for public GitHub projects.
 ### Environment Setup
 
 The Docker Compose configuration already includes the necessary environment variables for a development setup. However, you can customize these settings if needed.
+
+## If smth goes wrong, don't waste your time with docker and try to run the app locally. (but you can try to restart the container)
+
+1. make sure to have .env for client and server (check below)
+2. run only the db in the docker
+3. run `cd client && yarn`
+4. run `cd server && yarn`
+5. run `cd server && yarn dev`
+6. run `cd client && yarn dev`
 
 #### Environment Variables
 

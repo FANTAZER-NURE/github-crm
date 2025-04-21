@@ -7,13 +7,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - '5173:5173'
-    # volumes:
-    # - ./client:/app
-    #   - /app/node_modules
     depends_on:
       - server
     environment:
-      - VITE_API_URL=http://server:3000/api
+      - VITE_API_URL=http://localhost:3000/api
       - NODE_ENV=development
     restart: unless-stopped
 
@@ -23,9 +20,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - '3000:3000'
-    volumes:
-      - ./server:/app
-    #   - /app/node_modules
+    # volumes:
+    #   - ./server:/app
+    #   - ./server/src/generated:/app/src/generated
     depends_on:
       db:
         condition: service_healthy
