@@ -5,7 +5,7 @@ A simple project management system (CRM) for public GitHub projects.
 ## Note for reviewer:
 
 - the logger is a simple implementation, for prod I would use some 3-rd party solution.
-- also I probably would use some state manager, but in this context I considered it redundant
+- we store the revoked token in the db, so I would set up a cron job to clean it up as well
 
 ## Docker Setup
 
