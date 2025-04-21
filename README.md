@@ -4,8 +4,12 @@ A simple project management system (CRM) for public GitHub projects.
 
 ## Note for reviewer:
 
+- I deployed the app to my vps, and you can access and test it here: http://161.97.130.21:5173/register so you don't have
+to spin up anything locally. (And tbh because I had small issue with running BE with docker and considered it faster to do it this way)
 - the logger is a simple implementation, for prod I would use some 3-rd party and more reliable solution.
 - we store the revoked token in the db, so I would set up a cron job to clean it up as well
+
+*All the following instructions are for spinning up the app locally, which you hopefully don't need to do*
 
 ## Docker Setup
 
