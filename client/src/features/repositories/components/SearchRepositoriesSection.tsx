@@ -9,7 +9,7 @@ import { useRefreshRepository } from '../hooks/use-refresh-repository';
 import SearchInput from './SearchInput';
 import SearchResultsGrid from './SearchResultsGrid';
 import { useRepositoriesApi } from '../api/repositoriesApi';
-import { useToastActions } from '../../toast/hooks/useToastActions';
+import { useToastActions } from '../../toast/hooks/use-toast-actions';
 import { AxiosError } from 'axios';
 
 const SEARCH_DEBOUNCE_MS = 500;

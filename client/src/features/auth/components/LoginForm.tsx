@@ -11,7 +11,7 @@ import {
 } from '@blueprintjs/core';
 import { VerticalSpacing } from '../../../shared/ui/VerticalSpacing';
 import { IconNames } from '@blueprintjs/icons';
-import { useAuthActions } from '../hooks/useAuthActions';
+import { useAuthActions } from '../hooks/use-auth-actions';
 
 export const LoginForm = () => {
   const [email, setEmail] = useState('');

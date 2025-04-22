@@ -1,9 +1,8 @@
 import { useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRepositoriesApi } from '../api/repositoriesApi';
-import { Repository } from '../../../api/models';
-import { RepositoriesResponse } from '../../../api/endpoints';
-import { useToastActions } from '../../toast/hooks/useToastActions';
+import { RepositoriesResponse, Repository } from '../../../api/models';
+import { useToastActions } from '../../toast/hooks/use-toast-actions';
 import { AxiosError } from 'axios';
 
 /**

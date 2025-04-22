@@ -12,7 +12,7 @@ import { IconNames } from '@blueprintjs/icons';
 import styles from '../styles/auth.module.scss';
 import { VerticalSpacing } from '../../../shared/ui/VerticalSpacing';
 import { Link } from 'react-router-dom';
-import { useAuthActions } from '../hooks/useAuthActions';
+import { useAuthActions } from '../hooks/use-auth-actions';
 import { EMAIL_REGEX } from '../../../utils/constants';
 
 export const RegisterForm = () => {

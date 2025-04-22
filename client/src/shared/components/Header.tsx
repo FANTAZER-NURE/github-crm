@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Navbar, Button, Alignment, Tab, Tabs, Tag } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
 import styles from './Header.module.scss';
-import { useAuthActions } from '../../features/auth/hooks/useAuthActions';
+import { useAuthActions } from '../../features/auth/hooks/use-auth-actions';
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();

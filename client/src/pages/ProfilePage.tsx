@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@blueprintjs/core';
-import { useAuthActions } from '../features/auth/hooks/useAuthActions';
+import { useAuthActions } from '../features/auth/hooks/use-auth-actions';
 
 const ProfilePage: React.FC = () => {
   const { user, logout } = useAuthActions();

@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRepositoriesApi } from '../api/repositoriesApi';
 import { Repository } from '../../../api/models';
-import { useToastActions } from '../../toast/hooks/useToastActions';
+import { useToastActions } from '../../toast/hooks/use-toast-actions';
 import { AxiosError } from 'axios';
 
 type ApiResponse =

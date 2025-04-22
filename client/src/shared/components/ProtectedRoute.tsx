@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { Navigate, useLocation, Outlet } from 'react-router-dom';
 import { Spinner } from '@blueprintjs/core';
-import { useAuthActions } from '../../features/auth/hooks/useAuthActions';
+import { useAuthActions } from '../../features/auth/hooks/use-auth-actions';
 
 interface ProtectedRouteProps {
   requireAuth?: boolean;

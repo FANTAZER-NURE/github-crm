@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { H2 } from '@blueprintjs/core';
 import styles from '../styles/RepositoriesPage.module.scss';
 import { SearchRepositoriesSection } from '../components/SearchRepositoriesSection';
-import { useAuthActions } from '../../auth/hooks/useAuthActions';
+import { useAuthActions } from '../../auth/hooks/use-auth-actions';
 const SearchRepositoriesPage: React.FC = () => {
   const { user } = useAuthActions();
 

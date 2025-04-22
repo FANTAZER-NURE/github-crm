@@ -4,7 +4,7 @@ import styles from './App.module.scss';
 import { ProtectedRoute } from '../shared/components/ProtectedRoute';
 import { Spinner } from '@blueprintjs/core';
 import Header from '../shared/components/Header';
-import { useAuthActions } from '../features/auth/hooks/useAuthActions';
+import { useAuthActions } from '../features/auth/hooks/use-auth-actions';
 
 const LoginPage = lazy(() => import('../pages/LoginPage'));
 const RegisterPage = lazy(() => import('../pages/RegisterPage'));
